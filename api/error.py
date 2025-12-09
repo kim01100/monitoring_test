@@ -5,7 +5,7 @@ from http.server import BaseHTTPRequestHandler
 
 AIRTABLE_API_KEY = os.environ.get("AIRTABLE_API_KEY")
 AIRTABLE_BASE_ID = os.environ.get("AIRTABLE_BASE_ID")
-AIRTABLE_TABLE_NAME = os.environ.get("AIRTABLE_TABLE_NAME")  # Monitoring
+AIRTABLE_TABLE_NAME = os.environ.get("AIRTABLE_TABLE_NAME")  # Monitoring_3
 MONITOR_SECRET = os.environ.get("MONITOR_SECRET")            # 🔐 Secret obligatoire
 
 
@@ -63,4 +63,5 @@ class handler(BaseHTTPRequestHandler):
             self.send_response(500)
             self.end_headers()
             self.wfile.write(f"Airtable error: {e}".encode())
+
 
