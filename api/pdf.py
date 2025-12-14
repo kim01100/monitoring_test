@@ -22,8 +22,8 @@ def handler(request):
     # =========================
     # Security
     # =========================
-    auth = request.headers.get("authorization")
-    if not auth or auth != f"Bearer {MONITOR_SECRET}":
+    monitor_key = request.headers.get("x-monitor-key")
+if not monitor_key or monitor_key != MONITOR_SECRET:
         return {
             "statusCode": 401,
             "headers": {"Content-Type": "application/json"},
