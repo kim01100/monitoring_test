@@ -1,6 +1,5 @@
 import json
 import os
-import base64
 from http.server import BaseHTTPRequestHandler
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
@@ -17,6 +16,7 @@ class handler(BaseHTTPRequestHandler):
 
         filepath = os.path.join(TMP_DIR, "monitoring.pdf")
 
+        # Génération du PDF
         c = canvas.Canvas(filepath, pagesize=A4)
         width, height = A4
         y = height - 40
@@ -33,16 +33,14 @@ class handler(BaseHTTPRequestHandler):
 
         c.save()
 
+        # Lecture binaire du PDF
         with open(filepath, "rb") as f:
-            pdf_b64 = base64.b64encode(f.read()).decode()
+            pdf_bytes = f.read()
 
-        response = json.dumps({
-            "filename": "monitoring.pdf",
-            "content_base64": pdf_b64
-        }).encode()
-
+        # Réponse PDF DIRECTE
         self.send_response(200)
-        self.send_header("Content-Type", "application/json")
-        self.send_header("Content-Length", str(len(response)))
+        self.send_header("Content-Type", "application/pdf")
+        self.send_header("Content-Disposition", "inline; filename=monitoring.pdf")
+        self.send_header("Content-Length", str(len(pdf_bytes)))
         self.end_headers()
-        self.wfile.write(response)
+        self.wfile.write(pdf_bytes)
