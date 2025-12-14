@@ -4,12 +4,28 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from io import BytesIO
 
+
 def handler(request):
     if request.method != "POST":
-        return {"statusCode": 405, "body": "Method not allowed"}
+        return {
+            "statusCode": 405,
+            "body": "Method not allowed"
+        }
 
-    data = json.loads(request.body)
-    entries = data.get("entries", [])
+    try:
+        payload = json.loads(request.body)
+        logs = payload.get("entries", [])
+    except Exception:
+        return {
+            "statusCode": 400,
+            "body": "Invalid JSON"
+        }
+
+    if not logs:
+        return {
+            "statusCode": 400,
+            "body": "No entries"
+        }
 
     buffer = BytesIO()
     c = canvas.Canvas(buffer, pagesize=A4)
@@ -18,10 +34,10 @@ def handler(request):
     y = height - 40
     c.setFont("Helvetica", 10)
 
-    for e in entries:
-        line = f"{e.get('workflow')} | {e.get('module')} | {e.get('status')} | {e.get('message')}"
+    for log in logs:
+        line = f"{log.get('workflow')} | {log.get('module')} | {log.get('status')} | {log.get('message')}"
         c.drawString(40, y, line[:120])
-        y -= 14
+        y -= 15
         if y < 40:
             c.showPage()
             y = height - 40
